@@ -15,14 +15,15 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@DailyKeys" />
     <meta name="twitter:image" content="https://dspekxodspexlaeluffk.supabase.co/storage/v1/object/public/images/1775593841203-bvrh2fr4bu.png" />
+
     <style>
         :root { --accent: #ffffff; --bg: #0a0a0a; }
         body {
             margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg);
             background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                            radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                            radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+                              radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
             height: 100vh; display: flex; justify-content: center; align-items: center; color: white;
         }
         .glass-card {
@@ -63,14 +64,18 @@
         let currentKey = "";
 
         async function loadTodayKey() {
-            const dateStr = new Date().toISOString().split('T')[0];
-            
+            // ✅ Use local timezone, not UTC
+            const now = new Date();
+            const dateStr = now.getFullYear() + '-' + 
+                            String(now.getMonth() + 1).padStart(2,'0') + '-' +
+                            String(now.getDate()).padStart(2,'0');
+
             try {
                 const res = await fetch('/api/get-key', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer MySuperSecretKey2026!'   // ← Change this!
+                        'Authorization': 'Bearer MySuperSecretKey2026!'
                     },
                     body: JSON.stringify({ date: dateStr })
                 });
@@ -101,13 +106,13 @@
             document.getElementById('date-now').innerText = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
             const tomorrow = new Date(now);
-            tomorrow.setHours(24, 0, 0, 0);
+            tomorrow.setHours(24,0,0,0);  // midnight local time
             const diff = tomorrow - now;
-            
+
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
-            
+
             document.getElementById('countdown').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         }
 
